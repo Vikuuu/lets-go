@@ -20,6 +20,14 @@ func (app *application) serverError(w http.ResponseWriter, r *http.Request, err 
 	)
 
 	app.logger.Error(err.Error(), "method", method, "uri", uri, "trace", trace)
+
+	// In debug mode, print the stack trace on the browser.
+	if app.debug {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(trace))
+		return
+	}
+
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }
 
